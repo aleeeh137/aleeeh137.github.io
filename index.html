@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculadora de Salarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Salarios</h1>
+        <div class="form-group">
+            <label for="numEmpleados">Número de Empleados:</label>
+            <input type="number" id="numEmpleados" required>
+        </div>
+        <div id="empleados"></div>
+        <button onclick="calcularSalarios()">Calcular Salarios</button>
+        <h2>Resultados</h2>
+        <p>Suma de Salarios: <span id="sumaSalarios">0</span></p>
+        <p>Promedio de Salarios: <span id="promedioSalarios">0</span></p>
+        <p>Total de Horas Extras: <span id="totalHorasExtras">0</span></p>
+        <p>Suma de Boletos de Ornato: <span id="sumaBoletosOrnato">0</span></p>
+    </div>
+
+    <script>
+        function agregarEmpleadoInputs(numEmpleados) {
+            let empleadosDiv = document.getElementById("empleados");
+            empleadosDiv.innerHTML = "";
+
+            for (let i = 1; i <= numEmpleados; i++) {
+                let empleadoDiv = document.createElement("div");
+                empleadoDiv.className = "form-group";
+                empleadoDiv.innerHTML = `
+                    <h3>Empleado ${i}</h3>
+                    <label for="nombreEmpleado${i}">Nombre:</label>
+                    <input type="text" id="nombreEmpleado${i}" required>
+                    <br>
+                    <label for="apellidoEmpleado${i}">Apellido:</label>
+                    <input type="text" id="apellidoEmpleado${i}" required>
+                    <br>
+                    <label for="salarioEmpleado${i}">Salario a Recibir:</label>
+                    <input type="number" id="salarioEmpleado${i}" step="0.01" required>
+                    <br>
+                    <label for="horasExtrasEmpleado${i}">Horas Extras Realizadas:</label>
+                    <input type="number" id="horasExtrasEmpleado${i}" step="1" min="0">
+                `;
+                empleadosDiv.appendChild(empleadoDiv);
+            }
+        }
+
+        function calcularSalarios() {
+            const numEmpleados = parseInt(document.getElementById("numEmpleados").value);
+            let sumaSalarios = 0;
+            let totalHorasExtras = 0;
+            let sumaBoletosOrnato = 0;
+
+            for (let i = 1; i <= numEmpleados; i++) {
+                const nombre = document.getElementById(`nombreEmpleado${i}`).value;
+                const apellido = document.getElementById(`apellidoEmpleado${i}`).value;
+                const salarioEmpleado = parseFloat(document.getElementById(`salarioEmpleado${i}`).value) || 0;
+                const horasExtrasEmpleado = parseInt(document.getElementById(`horasExtrasEmpleado${i}`).value) || 0;
+
+                // Calcula el boleto de ornato
+                let boletoOrnato = 0;
+                if (salarioEmpleado > 0 && salarioEmpleado <= 1000) {
+                    boletoOrnato = 10;
+                } else if (salarioEmpleado > 1000.01 && salarioEmpleado <= 3000) {
+                    boletoOrnato = 15;
+                } else if (salarioEmpleado > 3000.01 && salarioEmpleado <= 6000) {
+                    boletoOrnato = 50;
+                } else if (salarioEmpleado > 6000.01 && salarioEmpleado <= 9000) {
+                    boletoOrnato = 75;
+                } else if (salarioEmpleado > 9000.01 && salarioEmpleado <= 12000) {
+                    boletoOrnato = 100;
+                } else if (salarioEmpleado > 12000.01) {
+                    boletoOrnato = 150;
+                }
+
+                sumaSalarios += salarioEmpleado;
+                totalHorasExtras += horasExtrasEmpleado;
+                sumaBoletosOrnato += boletoOrnato;
+            }
+
+            const promedioSalarios = sumaSalarios / numEmpleados;
+
+            document.getElementById("sumaSalarios").textContent = sumaSalarios.toFixed(2);
+            document.getElementById("promedioSalarios").textContent = promedioSalarios.toFixed(2);
+            document.getElementById("totalHorasExtras").textContent = totalHorasExtras;
+            document.getElementById("sumaBoletosOrnato").textContent = sumaBoletosOrnato.toFixed(2);
+
+            alert(`Resultados:
+Suma de Salarios: Q${sumaSalarios.toFixed(2)}
+Promedio de Salarios: Q${promedioSalarios.toFixed(2)}
+Total de Horas Extras: ${totalHorasExtras}
+Suma de Boletos de Ornato: Q${sumaBoletosOrnato.toFixed(2)}`);
+        }
+
+        document.getElementById("numEmpleados").addEventListener("input", function() {
+            const numEmpleados = parseInt(this.value);
+            agregarEmpleadoInputs(numEmpleados);
+        });
+    </script>
+</body>
+</html>
